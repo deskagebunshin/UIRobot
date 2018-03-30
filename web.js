@@ -1,5 +1,5 @@
 
-module.export = {
+module.exports = {
   Netflix: function (show){
     var password =  "2209@Tocino";
     var username = 'eric.diseno@gmail.com';
@@ -14,7 +14,7 @@ module.export = {
     var chromeCapabilities = webdriver.Capabilities.chrome();
     //setting chrome options to start the browser fully maximized
     var chromeOptions = {
-        'args': ['--start-maximized', '--mute-audio']
+        'args': ['--kiosk', '--mute-audio', '--disable-infobars']
     };
     chromeCapabilities.set('chromeOptions', chromeOptions);
     var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
@@ -58,7 +58,7 @@ module.export = {
     var chromeCapabilities = webdriver.Capabilities.chrome();
     //setting chrome options to start the browser fully maximized
     var chromeOptions = {
-        'args': []
+        'args': ['--disable-infobars']
     };
     chromeCapabilities.set('chromeOptions', chromeOptions);
     var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
@@ -71,7 +71,7 @@ module.export = {
   Spotify: function (artist) {
     var password =  "2209@tocino";
     var username = 'afroboy55@gmail.com';
-    var time = 30000;
+    var time = 300000;
 
     var assert = require('assert');
 
@@ -82,7 +82,7 @@ module.export = {
     var chromeCapabilities = webdriver.Capabilities.chrome();
     //setting chrome options to start the browser fully maximized
     var chromeOptions = {
-        'args': []
+        'args': ['--disable-infobars']
     };
     chromeCapabilities.set('chromeOptions', chromeOptions);
     var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
