@@ -14,7 +14,7 @@ module.exports = {
     var chromeCapabilities = webdriver.Capabilities.chrome();
     //setting chrome options to start the browser fully maximized
     var chromeOptions = {
-        'args': ['--kiosk', '--mute-audio', '--disable-infobars']
+        'args': ['--start-maximized', '--mute-audio', '--disable-infobars']
     };
     chromeCapabilities.set('chromeOptions', chromeOptions);
     var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
@@ -48,6 +48,29 @@ module.exports = {
 
   },
 
+  NewNetflix (driver, show){
+    var webdriver = require ('selenium-webdriver'),
+      By = webdriver.By,
+      until = webdriver.until;
+
+    var time  = 30000;
+    driver.get('https://www.netflix.com');
+    var search = driver.wait(until.elementLocated({ className: 'searchTab' }), time);
+    driver.wait(until.elementIsVisible(search), time).click().then(function () {
+      var searchinput = driver.wait(until.elementLocated({ xpath: '//input[@dir="ltr"]' }), time);
+      driver.wait(until.elementIsVisible(searchinput), time).sendKeys(show).then(function () {
+        var searchresult = driver.wait(until.elementLocated({ xpath: '//*[@id="title-card-0-0"]/div' }), time);
+        driver.wait(until.elementIsVisible(searchresult), time).click().then(function () {
+          setTimeout(function () {
+            var play = driver.wait(until.elementLocated({ className: ' playLink' }), time);
+            driver.wait(until.elementIsVisible(play), time).click();
+          }, 1000);
+        });
+      });
+    });
+
+  },
+
   Youtube: function (link) {
     var assert = require('assert');
 
@@ -62,8 +85,9 @@ module.exports = {
     };
     chromeCapabilities.set('chromeOptions', chromeOptions);
     var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
+    var windowOptions = {height: 600, width: 800, x: Math.floor(Math.random() * 800) + 300, y: Math.floor(Math.random() * 500)}
+    driver.manage().window().setRect(windowOptions);
     driver.get(link);
-
     return driver;
   },
 
