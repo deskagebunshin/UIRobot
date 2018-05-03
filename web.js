@@ -1,4 +1,4 @@
-
+const colundi = require('./colundi');
 module.exports = {
   Netflix: function (show){
     var password =  "2209@Tocino";
@@ -31,13 +31,15 @@ module.exports = {
           driver.wait(until.elementIsVisible(search), time).click().then(function () {
             var searchinput = driver.wait(until.elementLocated({ xpath: '//input[@dir="ltr"]' }), time);
             driver.wait(until.elementIsVisible(searchinput), time).sendKeys(show).then(function () {
-              var searchresult = driver.wait(until.elementLocated({ xpath: '//*[@id="title-card-0-0"]/div' }), time);
-              driver.wait(until.elementIsVisible(searchresult), time).click().then(function () {
-                setTimeout(function () {
-                  var play = driver.wait(until.elementLocated({ className: ' playLink' }), time);
-                  driver.wait(until.elementIsVisible(play), time).click();
-                }, 1000);
-              });
+              setTimeout(function () {
+                var searchresult = driver.wait(until.elementLocated({ xpath: '//*[@id="title-card-0-0"]/div' }), time);
+                driver.wait(until.elementIsVisible(searchresult), time).click().then(function () {
+                  setTimeout(function () {
+                    var play = driver.wait(until.elementLocated({ className: ' playLink' }), time);
+                    driver.wait(until.elementIsVisible(play), time).click();
+                  }, 2222);
+                });
+              }, 2222);
             });
           });
         });
@@ -48,7 +50,16 @@ module.exports = {
 
   },
 
-  NewNetflix (driver, show){
+  SpotifyNext: function (driver) {
+    var webdriver = require ('selenium-webdriver'),
+      By = webdriver.By,
+      until = webdriver.until;
+    var time  = 30000;
+    var next = driver.wait(until.elementLocated({ xpath: '//button[@title="Next"]' }), time);
+    driver.wait(until.elementIsVisible(next), time).click();
+  },
+
+  NewNetflix: function (driver, show){
     var webdriver = require ('selenium-webdriver'),
       By = webdriver.By,
       until = webdriver.until;
@@ -69,6 +80,105 @@ module.exports = {
       });
     });
 
+  },
+
+  Website: function (link) {
+    var assert = require('assert');
+
+    var webdriver = require ('selenium-webdriver'),
+      By = webdriver.By,
+      until = webdriver.until;
+
+    var chromeCapabilities = webdriver.Capabilities.chrome();
+    //setting chrome options to start the browser fully maximized
+    var chromeOptions = {
+        'args': ['--disable-infobars']
+    };
+    chromeCapabilities.set('chromeOptions', chromeOptions);
+    var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
+  //  var windowOptions = {height: 600, width: 800, x: Math.floor(Math.random() * 800) + 300, y: Math.floor(Math.random() * 500)}
+    //driver.manage().window().setRect(windowOptions);
+    driver.get(link);
+    return driver;
+  },
+
+  Instagram: function (link) {
+    var assert = require('assert');
+    var time  = 30000;
+    var webdriver = require ('selenium-webdriver'),
+      By = webdriver.By,
+      until = webdriver.until;
+
+    var chromeCapabilities = webdriver.Capabilities.chrome();
+    //setting chrome options to start the browser fully maximized
+    var chromeOptions = {
+        'args': ['--disable-infobars']
+    };
+
+    var username = "ericfanghanel";
+    var password = "2209@Tocino";
+
+    chromeCapabilities.set('chromeOptions', chromeOptions);
+    var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
+    driver.get("https://www.instagram.com/accounts/login/");
+    var user = driver.wait(until.elementLocated({ xpath: '//input[@name="username"]' }), time);
+    driver.wait(until.elementIsVisible(user), time).sendKeys(username).then(function () {
+      var pass = driver.wait(until.elementLocated({ xpath: '//input[@name="password"]' }), time);
+      driver.wait(until.elementIsVisible(pass), time).sendKeys(password + "\n").then(function () {
+
+      });
+
+    });
+
+
+    return driver;
+  },
+
+  Facebook: function (link) {
+    var assert = require('assert');
+    var time  = 30000;
+    var webdriver = require ('selenium-webdriver'),
+      By = webdriver.By,
+      until = webdriver.until;
+
+    var chromeCapabilities = webdriver.Capabilities.chrome();
+    //setting chrome options to start the browser fully maximized
+    var chromeOptions = {
+        'args': ['--disable-infobars', "--disable-notifications"]
+    };
+
+    var username = "deskagebunshin@gmail.com";
+    var password = "2209@tocino";
+
+    chromeCapabilities.set('chromeOptions', chromeOptions);
+    var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
+    driver.get("https://www.facebook.com/login");
+    var user = driver.wait(until.elementLocated({ xpath: '//input[@name="email"]' }), time);
+    driver.wait(until.elementIsVisible(user), time).sendKeys(username).then(function () {
+      var pass = driver.wait(until.elementLocated({ xpath: '//input[@name="pass"]' }), time);
+      driver.wait(until.elementIsVisible(pass), time).sendKeys(password + "\n").then(function () {
+          driver.get(link);
+      });
+
+    });
+
+
+    return driver;
+  },
+
+  Scroll: function (driver) {
+    var i = 0 ,
+    interval = setInterval(function () {
+      driver.executeScript("window.scrollBy(0, "+colundi.index(i)/4+");");
+      i++;
+      console.log("scroll");
+      if(Math.random()<0.333){
+        i = Math.floor(Math.random()*1000);
+      }
+      if(Math.random()<0.001 && i > 100){
+        clearInterval(interval);
+      }
+    }, 100);
   },
 
   Youtube: function (link) {
@@ -94,7 +204,7 @@ module.exports = {
 
   Spotify: function (artist) {
     var password =  "2209@tocino";
-    var username = 'afroboy55@gmail.com';
+    var username = 'deskagebunshin@gmail.com';
     var time = 300000;
 
     var assert = require('assert');
@@ -124,7 +234,16 @@ module.exports = {
               var artist = driver.wait(until.elementLocated({ className: 'mo-info-name' }), time);
               driver.wait(until.elementIsVisible(artist), time).click().then(function () {
                 var play = driver.wait(until.elementLocated({ xpath: '//button[contains(text(), "PLAY")]' }), time);
-                driver.wait(until.elementIsVisible(play), time).click();
+                driver.wait(until.elementIsVisible(play), time).click().then(function () {
+                  setTimeout(function () {
+                    var shuffle = driver.wait(until.elementLocated({ xpath: '//button[@title="Enable shuffle"]' }), time);
+                    driver.wait(until.elementIsVisible(shuffle), time).click().then(function functionName() {
+                      var next = driver.wait(until.elementLocated({ xpath: '//button[@title="Next"]' }), time);
+                      driver.wait(until.elementIsVisible(next), time).click();
+                    });
+                  }, 1000);
+
+                });
               });
             });
           });

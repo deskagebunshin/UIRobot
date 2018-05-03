@@ -1,22 +1,23 @@
 const perlin = require('perlin-noise');
 var socket = require('socket.io-client')('http://mindcontroll.herokuapp.com');
 const web = require('./web');
-var spotifyTab, netflixTab, youtubeTabs = [], facebookTabs= [], webTabs = [];
+const colundi = require('./colundi');
+var spotifyTab, netflixTab, youtubeTabs = [], facebookTab, webTabs = [], instagram;
 var netflix = [], spotify = [], youtube = [], facebook = [], webLinks = [];
 var score = perlin.generatePerlinNoise(1, 1000);
 var scoreIndex = 0;
 const fs = require('fs');
-var bpm = 12;
-var beat = 60000/bpm;
-// netflix.push('planet earth');
-// netflix.push('kamasi washington');
+var bpm = 440;
+var beat = (60000/bpm)*16;
+var start = true;
+
 GetData();
 
 setTimeout(function () {
   console.log(youtube);
   console.log(spotify);
   console.log(netflix);
-  nextInScore(2);
+  nextInScore(0);
 }, 5000);
 
 function GetData(srcPath, object) {
@@ -56,6 +57,15 @@ function GetData(srcPath, object) {
                  netflix = JSON.parse(data);
               }
           });
+          fs.readFile('./Facebook.json', 'utf8', function (err, data) {
+                if (err) {
+                  return console.log(err);
+                }
+                console.log('file read');
+                if(data){
+                   facebook = JSON.parse(data);
+                }
+            });
 }
 
 function Quit() {
@@ -159,19 +169,32 @@ socket.on('interupt now', function(data){
   clearAll();
 });
 
+socket.on('fromVR', function(data){
+  console.log('message from VR');
+  if(spotifyTab){
+    web.SpotifyNext(spotifyTab)
+  } else {
+    var index = Math.floor(Math.random() * spotify.length);
+    SpotifySearch(spotify[index]);
+  }
+});
+
 function clearAll(){
   if(spotifyTab){
     spotifyTab.quit();
     spotifyTab = false;
+    spotifyTab = undefined;
   }
   if(netflixTab){
     netflixTab.quit();
     netflixTab = false;
+    netflixTab = undefined;
   }
   if(youtubeTabs.length > 0){
     for (var i = 0; i < youtubeTabs.length; i++) {
       youtubeTabs[i].quit();
       youtubeTabs[i] = false;
+      youtubeTabs = []
     }
   }
 }
@@ -192,7 +215,7 @@ function NetflixSearch(artist) {
 }
 
 function YoutubeSearch(page) {
-  youtubeTabs.push(web.Youtube(page));
+  youtubeTabs.push(web.Youtube(page.link));
 }
 
 function ClearYoutube(page) {
@@ -204,15 +227,25 @@ function ClearYoutube(page) {
   }
 }
 
-function YoutubeBeat(i) {
+function WebTab(page) {
+  if(webTabs.length > 0){
+    for (var i = 0; i < youtubeTabs.length; i++) {
+      webTabs[i].quit();
+    }
+    webTabs = [];
+  }
+  webTabs.push(web.Website(webLinks[Math.floor(Math.random()*webLinks.length)]));
+}
+
+function YoutubeBeat(i, colundiBeat) {
   if (youtubeTabs.length >= 4) {
     youtubeTabs[0].quit();
     youtubeTabs.splice(0,1);
   }
 
-  if(i > 6){
+  if(i > 8){
     ClearYoutube();
-    nextInScore();
+    //nextInScore();
     return;
   }
 
@@ -220,8 +253,8 @@ function YoutubeBeat(i) {
   console.log(index);
   YoutubeSearch(youtube[index]);
   setTimeout(function () {
-      YoutubeBeat(i+1);
-  }, beat);
+      YoutubeBeat(i+1, colundiBeat);
+  }, colundiBeat);
 }
 
 function NetflixAndChill(time) {
@@ -232,17 +265,54 @@ function NetflixAndChill(time) {
   index = Math.floor(Math.random() * spotify.length);
   SpotifySearch(spotify[index]);
 
-  setTimeout(function () {
-    //clearAll();
-    nextInScore(0);
-  }, time * beat);
+
+}
+
+function OneYoutube() {
+
 }
 
 function nextInScore(i) {
 
-  if (i < 1) {
-    YoutubeBeat(0);
-  } else {
-    NetflixAndChill(6);
-  }
+  // setTimeout(function () {
+  //   i+=1;
+  //   i%=4;
+  //   nextInScore(i);
+  // }, beat);
+  // console.log(i);
+  // if(i == 0){
+  //   if(Math.random()<0.12 || start){
+  //     console.log('netflix and chill');
+  //     NetflixAndChill();
+  //     start = false;
+  //   } else if(Math.random()<0.06){
+  //     clearAll();
+  //     OneYoutube();
+  //   }
+  // }
+  // instagram = web.Instagram();
+  // web.Scroll(instagram);
+  // console.log('next');
+
+  facebookTab = web.Facebook(facebook[Math.floor(Math.random()*facebook.length)]);
+  setTimeout(function () {
+    web.Scroll(facebookTab);
+  }, colundi.randomInBand(0,10));
 }
+
+
+// function nextInScore(i) {
+//   // index = Math.floor(Math.random() * spotify.length);
+//   // SpotifySearch(spotify[index]);
+//   var time = colundi.randomInBand(0,10)*16;
+//   console.log(time);
+//
+//   if(Math.random()>0.3){
+//     WebTab();
+//   }
+//   if (i < 1) {
+//     YoutubeBeat(0, colundi.randomInBand(0,10));
+//   } else {
+//     NetflixAndChill(time);
+//   }
+// }

@@ -1,5 +1,15 @@
-["https://www.youtube.com/watch?v=ZJFvL0rLWfo",
-  "https://www.youtube.com/watch?v=3VBzXd5X8hU",
-  "https://youtu.be/KknX4WJcE9g?t=38",
-  "https://www.youtube.com/watch?v=Fp5qeX6hx6Q&t=1912s"
+[ {"name": "tim1", "link":"https://www.youtube.com/watch?v=ZJFvL0rLWfo", "tags":["art"]},
+  {"name":"I kinda like everything right now" ,"link":"https://www.youtube.com/watch?v=3VBzXd5X8hU", "tags":["art"]},
+  {"name":"ACCEL","link": "https://youtu.be/KknX4WJcE9g?t=38", "tags":["art"]},
+  {"name":"nick land 1", "link":"https://www.youtube.com/watch?v=Fp5qeX6hx6Q&t=1912s", "tags":["art"]},
+  {"name":"eyes without a face","link":"https://www.youtube.com/watch?v=9OFpfTd0EIs", "tags":["music"]},
+  {"name":"axolotls are masters of regeneration","link":"https://youtu.be/Eo50ctoOTWs?t=128", "tags":["axolotl"]},
+  {"name":"eyes without a face","link":"https://www.youtube.com/watch?v=9OFpfTd0EIs", "tags":["music"]},
+  {"name":"resistire","link":"https://www.youtube.com/watch?v=K1rKj6XMt4Q", "tags":["music"]},
+  {"name":"rober anton wilson","link":"https://www.youtube.com/watch?v=VEOIfLcjdbg&feature=youtu.be", "tags":["music"]},
+  {"name":"rober anton wilson","link":"https://www.youtube.com/watch?v=2DCBSI5m8fY", "tags":["music"]},
+  {"name":"rober anton wilson","link":"https://www.youtube.com/watch?v=tqnfoRXKgLs", "tags":["music"]}
+
+
+
 ]
