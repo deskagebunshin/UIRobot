@@ -121,6 +121,10 @@ module.exports = {
     chromeCapabilities.set('chromeOptions', chromeOptions);
     var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
     driver.get("https://www.instagram.com/accounts/login/");
+
+    var windowOptions = {height: 1200, width: 800, x: Math.floor(Math.random() * 800), y: Math.floor(Math.random() * 10)}
+    driver.manage().window().setRect(windowOptions);
+
     var user = driver.wait(until.elementLocated({ xpath: '//input[@name="username"]' }), time);
     driver.wait(until.elementIsVisible(user), time).sendKeys(username).then(function () {
       var pass = driver.wait(until.elementLocated({ xpath: '//input[@name="password"]' }), time);
@@ -153,6 +157,10 @@ module.exports = {
     chromeCapabilities.set('chromeOptions', chromeOptions);
     var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
     driver.get("https://www.facebook.com/login");
+
+    var windowOptions = {height: 1200, width: 800, x: Math.floor(Math.random() * 800), y: Math.floor(Math.random() * 10)}
+    driver.manage().window().setRect(windowOptions);
+
     var user = driver.wait(until.elementLocated({ xpath: '//input[@name="email"]' }), time);
     driver.wait(until.elementIsVisible(user), time).sendKeys(username).then(function () {
       var pass = driver.wait(until.elementLocated({ xpath: '//input[@name="pass"]' }), time);
@@ -169,13 +177,18 @@ module.exports = {
   Scroll: function (driver) {
     var i = 0 ,
     interval = setInterval(function () {
-      driver.executeScript("window.scrollBy(0, "+colundi.index(i)/4+");");
-      i++;
-      console.log("scroll");
-      if(Math.random()<0.333){
-        i = Math.floor(Math.random()*1000);
-      }
-      if(Math.random()<0.001 && i > 100){
+      if(driver !== undefined){
+
+        driver.executeScript("window.scrollBy(0, "+colundi.index(i)/4+");");
+        i++;
+        console.log("scroll");
+        if(Math.random()<0.333){
+          i = Math.floor(Math.random()*1000);
+        }
+        if(Math.random()<0.001 && i > 100){
+          clearInterval(interval);
+        }
+      }  else{
         clearInterval(interval);
       }
     }, 100);
@@ -197,7 +210,13 @@ module.exports = {
     var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
     var windowOptions = {height: 600, width: 800, x: Math.floor(Math.random() * 800) + 300, y: Math.floor(Math.random() * 500)}
     driver.manage().window().setRect(windowOptions);
-    driver.get(link);
+    driver.get(link).then(function () {
+      var user = driver.wait(until.elementLocated({ className: 'videoAdUiSkipButton videoAdUiAction videoAdUiFixedPaddingSkipButton' }), time);
+      driver.wait(until.elementIsVisible(user), 30000).click();
+
+    });
+
+
     return driver;
   },
 

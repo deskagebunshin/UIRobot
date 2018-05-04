@@ -17,7 +17,12 @@ setTimeout(function () {
   console.log(youtube);
   console.log(spotify);
   console.log(netflix);
-  nextInScore(0);
+  // nextInScore(0);
+  var index = Math.floor(Math.random() * youtube.length);
+  setInterval(function () {
+    YoutubeSearch(youtube[index]);
+  }, 10000);
+
 }, 5000);
 
 function GetData(srcPath, object) {
@@ -263,7 +268,7 @@ function YoutubeBeat(i, colundiBeat) {
   }
 
   var index = Math.floor(Math.random() * youtube.length);
-  console.log(index);
+  console.log("youtube beat index");
   YoutubeSearch(youtube[index]);
   setTimeout(function () {
       YoutubeBeat(i+1, colundiBeat);
@@ -307,34 +312,49 @@ function nextInScore(i) {
     }
   }
 
-  if(Math.random()<0.12){
-    Instagram()
+  if(i == 2){
+    if(Math.random()<0.12){
+      Instagram()
+    }
+
+    if(Math.random()<0.06){
+      FacebookGroup()
+    }
   }
 
-  if(Math.random()<0.12){
-    FacebookGroup()
+  if(i==3){
+    if(Math.random()<0.01){
+      YoutubeBeat(0, colundi.randomInBand(0,10));
+    }
   }
-
-  if(Math.random()<0.12){
-    YoutubeBeat();
+  if(i == 1){
+    if(Math.random() <  0.2){
+      OneYoutube();
+    }
   }
 
   console.log('next');
 }
 
 function Instagram() {
+  if(instagramTab){
+    instagramTab.quit();
+  }
   instagramTab = web.Instagram();
   setTimeout(function () {
-    web.Scroll(instagram);
-  }, colundi.randomInBand(0,10)*1000);
+    web.Scroll(instagramTab);
+  }, colundi.randomInBand(0,10));
 
 }
 
 function FacebookGroup(){
+  if(facebookTab){
+    facebookTab.quit();
+  }
   facebookTab = web.Facebook(facebook[Math.floor(Math.random()*facebook.length)]);
   setTimeout(function () {
     web.Scroll(facebookTab);
-  }, colundi.randomInBand(0,10)*1000);
+  }, colundi.randomInBand(0,10));
 }
 
 // function nextInScore(i) {
