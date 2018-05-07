@@ -14,19 +14,20 @@ var start = true;
 GetData();
 
 for (var i = 0; i < score.length; i++) {
+  console.log(score[i]);
   score[i] = Math.floor(score[i]*colundi.colundi.length);
+  console.log(score[i]);
 }
 
 function speed(index) {
   console.log('current beat = ' + beat);
   setTimeout(function () {
-    var newBeat = colundi.index[score[index]%colundi.colundi.length];
-    newBeat = (60000/speed)*16;
-    beat = newBeat;
+    var newBeat = colundi.index(score[index]%colundi.colundi.length);
+    beat = newBeat*16;
     console.log('new beat = ' + beat);
     index++;
     speed(index);
-  }, beat * 16 );
+  }, beat * 4 );
 }
 
 
@@ -35,7 +36,7 @@ setTimeout(function () {
   console.log(spotify);
   console.log(netflix);
   nextInScore(0);
-  //speed(0);
+  // speed(0);
 
 
   // TEST SPOTIFY
@@ -193,6 +194,7 @@ socket.on('delete', function (data) {
 
 socket.on('new message', function functionName(data) {
   console.log('new message = ' + data);
+  if (data.plat) {
   if(data.plat.includes('netflix')){
     netflix.push(data.msg);
     NetflixSearch(data.msg);
@@ -212,7 +214,7 @@ socket.on('new message', function functionName(data) {
     webLinks.push(data.msg);
   }
 
-  Refresh();
+  Refresh();}
 });
 
 socket.on('disconnect', function(){
@@ -237,16 +239,41 @@ socket.on('interupt now', function(data){
 });
 
 socket.on('fromVR', function(data){
-  console.log('message from VR');
-  if(spotifyTab){
-    web.SpotifyNext(spotifyTab)
+  console.log('VR MESSAGE!!!');
+  if(true){
+    clearAll();
+    if(spotifyTab !== undefined){
+      web.SpotifyNext(spotifyTab);
+    } else {
+      if (youtubeMusicTab !== undefined) {
+        youtubeMusicTab.quit();
+        youtubeMusicTab = undefined;
+      }
+      var index = Math.floor(Math.random() * spotify.length);
+      SpotifySearch(spotify[index]);
+    }
   } else {
-    var index = Math.floor(Math.random() * spotify.length);
-    SpotifySearch(spotify[index]);
+
+    if (spotify !== undefined) {
+      web.SpotifyNext(spotifyTab);
+    }else {
+      YoutubeMusic();
+    }
   }
 });
 
+setInterval(function () {
+  console.log("HI");
+  socket.emit('send message', {msg:"hi", plat:[]});
+}, 10000);
+
 function YoutubeMusic() {
+  if(spotifyTab !== undefined){
+    setTimeout(function () {
+      spotifyTab.quit();
+      spotifyTab = undefined;
+    }, beat);
+  }
   console.log("youtube music length", youtubeMusic.length);
   var i = Math.floor((youtubeMusic.length*Math.random()));
   console.log();
@@ -254,34 +281,46 @@ function YoutubeMusic() {
     youtubeMusicTab.quit();
     youtubeMusicTab = undefined;
   }
+
+
   youtubeMusicTab = web.Youtube(youtubeMusic[i].link);
   console.log("new music tab");
 }
 
 function clearAll(){
-  if(spotifyTab){
-    setTimeout(function () {
-      spotifyTab.quit();
-      spotifyTab = undefined;
-    }, beat);
-  }
+
   // if(netflixTab){
   //   netflixTab.quit();
   //   netflixTab = undefined;
   // }
+  if (youtubeTab !== undefined) {
+    youtubeTab.quit();
+    youtubeTab = undefined;
+  }
+
+  clearTimeout(youtubeBeat);
   if(youtubeTabs.length > 0){
     for (var i = 0; i < youtubeTabs.length; i++) {
       youtubeTabs[i].quit();
     }
     youtubeTabs = [];
   }
-  if (facebookTab) {
+  if (facebookTab !== undefined) {
     facebookTab.quit();
     facebookTab = undefined;
   }
-  if (instagramTab) {
+  if (instagramTab !== undefined) {
     instagramTab.quit();
     instagramTab = undefined;
+  }
+  if (webTabs.length > 0 && webTabs !== undefined) {
+    for (var i = 0; i < webTabs.length; i++) {
+      if (webTabs[i] !== undefined) {
+        webTabs[i].quit();
+        webTabs[i] = undefined;
+      }
+    }
+    webTabs = [];
   }
 }
 
@@ -345,6 +384,8 @@ function WebTab(page) {
   }, beat*64);
 }
 
+var youtubeBeat;
+
 function YoutubeBeat(i, colundiBeat) {
   console.log("YoutubeBeat");
   if (youtubeTabs.length >= 4) {
@@ -359,7 +400,7 @@ function YoutubeBeat(i, colundiBeat) {
 
   var index = Math.floor(Math.random() * youtube.length);
   YoutubeSearch(youtube[index]);
-  setTimeout(function () {
+  youtubeBeat = setTimeout(function () {
       YoutubeBeat(i+1, colundiBeat);
   }, colundiBeat);
 }
@@ -406,11 +447,11 @@ console.log('tick');
     nextInScore(i);
   }, beat);
   if(i == 0){
-    if(Math.random()<0.06 || start){
+    if(Math.random()<0.0666 || start){
       NetflixAndChill();
       console.log("Netflix And Chill");
       start = false;
-    } else if(Math.random()<0.06){
+    } else if(Math.random()<0.0666){
       console.log("DEATH");
       clearAll();
       YoutubeMusic();
@@ -418,24 +459,29 @@ console.log('tick');
   }
 
   if(i == 2){
-    if(Math.random()<0.06){
-      Instagram()
+
+    if(Math.random()<0.111){
+      Instagram();
+      console.log("INSTAGRAM");
     }
-    if(Math.random()<0.06){
-      FacebookGroup()
+    if(Math.random()<0.111){
+      FacebookGroup();
+      console.log("FACEBOOK");
+
     }
   }
 
   if(i==3){
-    if(Math.random()<0.041){
-      YoutubeBeat(0, colundi.randomInBand(0,10));
-    } else if (Math.random()<0.02) {
+    if(Math.random()<0.0444){
+      console.log("YOUTUBEBEAT");
+      YoutubeBeat(0, colundi.randomInBand(0,20));
+    } else if (Math.random()<0.111) {
       var index = Math.floor(Math.random()*web.length)
       WebTab(web[index]);
     }
   }
   if(i == 1){
-    if(Math.random() <  0.2){
+    if(Math.random() <  0.222){
       OneYoutube();
     }
   }
@@ -445,23 +491,38 @@ console.log('tick');
 
 function Instagram() {
   if(instagramTab){
-    instagramTab.quit();
+    //instagramTab.quit();
+  } else{
+    instagramTab = web.Instagram(instagram[Math.floor(Math.random()*instagram.length)]);
+    setTimeout(function () {
+      web.Scroll(instagramTab);
+    }, colundi.randomInBand(0,10));
   }
-  instagramTab = web.Instagram();
+
   setTimeout(function () {
-    web.Scroll(instagramTab);
-  }, colundi.randomInBand(0,10));
+    if(instagramTab){
+      instagramTab.quit();
+      instagramTab = undefined;
+    }
+  }, beat * 16);
 
 }
 
 function FacebookGroup(){
   if(facebookTab){
-    facebookTab.quit();
+    // facebookTab.quit();
+  }  else {
+    facebookTab = web.Facebook(facebook[Math.floor(Math.random()*facebook.length)]);
+    setTimeout(function () {
+      web.Scroll(facebookTab);
+    }, colundi.randomInBand(0,10));
   }
-  facebookTab = web.Facebook(facebook[Math.floor(Math.random()*facebook.length)]);
   setTimeout(function () {
-    web.Scroll(facebookTab);
-  }, colundi.randomInBand(0,10));
+    if(facebookTab){
+      facebookTab.quit();
+      facebookTab = undefined;
+    }
+  }, beat *16);
 }
 
 // function nextInScore(i) {
