@@ -2,6 +2,7 @@ const perlin = require('perlin-noise');
 var socket = require('socket.io-client')('http://mindcontroll.herokuapp.com');
 const web = require('./web');
 const colundi = require('./colundi');
+const task = require('ms-task');
 var spotifyTab, netflixTab, youtubeTabs = [], youtubeTab, youtubeMusicTab, facebookTab, facebookTabs = [],  webTabs = [], instagramTab;
 var netflix = [], spotify = [], youtube = [],youtubeMusic = [], facebook = [], webLinks = [], instagram = [];
 var score = perlin.generatePerlinNoise(1, 1000);
@@ -64,6 +65,21 @@ setTimeout(function () {
   // setInterval(function () {
   //   WebTab();
   // }, 5000);
+
+  // killEverything
+  setInterval(function () {
+    clearAll();
+    task.pidOf("chrome.exe", function(err, processes){
+      for (var i = 0; i < processes.length; i++) {
+        task.kill(processes[i], function (err) {
+          console.log(err);
+        });
+      }
+      netflixTab = undefined;
+      spotifyTab = undefined;
+      NetflixAndChill();
+    });
+  }, beat * 64 * 16);
 
   // TEST One Youtube
   // setInterval(function () {
@@ -242,6 +258,10 @@ socket.on('fromVR', function(data){
   console.log('VR MESSAGE!!!');
   if(true){
     clearAll();
+    if (youtubeMusicTab !== undefined) {
+      youtubeMusicTab.quit();
+      youtubeMusicTab = undefined;
+    }
     if(spotifyTab !== undefined){
       web.SpotifyNext(spotifyTab);
     } else {
@@ -288,13 +308,14 @@ function YoutubeMusic() {
 }
 
 function clearAll(){
-
+  console.log('CLEAR ALL!!!!');
   // if(netflixTab){
   //   netflixTab.quit();
   //   netflixTab = undefined;
   // }
   if (youtubeTab !== undefined) {
     youtubeTab.quit();
+    console.log('quitting youtube tab');
     youtubeTab = undefined;
   }
 
@@ -313,7 +334,12 @@ function clearAll(){
     instagramTab.quit();
     instagramTab = undefined;
   }
-  if (webTabs.length > 0 && webTabs !== undefined) {
+  ClearWebTabs();
+}
+
+function ClearWebTabs() {
+  console.log('CLEAR WEBTABS');
+  if (webTabs.length > 0) {
     for (var i = 0; i < webTabs.length; i++) {
       if (webTabs[i] !== undefined) {
         webTabs[i].quit();
@@ -334,13 +360,9 @@ function SpotifySearch(artist) {
 }
 
 function NetflixSearch(artist) {
-  if(netflixTab){
+  if(netflixTab !== undefined){
     web.NewNetflix(netflixTab, artist);
   } else {
-    if (netflixTab) {
-      netflixTab.quit();
-      netflixTab = undefined;
-    }
     netflixTab = web.Netflix(artist);
   }
 }
@@ -353,34 +375,23 @@ function ClearYoutube(page) {
   if(youtubeTabs.length > 0){
     for (var i = 0; i < youtubeTabs.length; i++) {
       youtubeTabs[i].quit();
+      youtubeTabs[i] = undefined;
     }
     youtubeTabs = [];
   }
 }
 
 function WebTab(page) {
-  if(webTabs.length > 2){
-    for (var i = 0; i < webTabs.length; i++) {
-      webTabs[i].quit();
-    }
-    webTabs = [];
-  }
+
   webTabs.push(web.Website(webLinks[Math.floor(Math.random()*webLinks.length)]));
 
   setTimeout(function () {
-    if (webTabs.length>0) {
-      for (var i = 0; i < webTabs.length; i++) {
-        if(webTabs[i] != undefined){
-          webTabs[i].quit();
-          webTabs[i] = undefined
-        }
-      }
-    }
-    webTabs = [];
-    if(Math.random()>0.1){
-      var index = Math.floor(Math.random()*web.length)
-      WebTab(web[index]);
-    }
+
+    ClearWebTabs();
+    // if(Math.random()>0.1){
+    //   var index = Math.floor(Math.random()*web.length)
+    //   WebTab(web[index]);
+    // }
   }, beat*64);
 }
 
@@ -405,13 +416,15 @@ function YoutubeBeat(i, colundiBeat) {
   }, colundiBeat);
 }
 
-function NetflixAndChill(time) {
+var netflixTimeOut;
 
-  setTimeout(function () {
+function NetflixAndChill(time) {
+  clearTimeout(netflixTimeOut);
+  netflixTimeOut = setTimeout(function () {
     var index = Math.floor(Math.random() * netflix.length);
     NetflixSearch(netflix[index]);
   }, 10000);
-  if (youtubeMusicTab) {
+  if (youtubeMusicTab !== undefined) {
     youtubeMusicTab.quit();
     youtubeMusicTab = undefined;
   }
@@ -429,12 +442,9 @@ function OneYoutube() {
   }
   youtubeTab = web.Youtube(youtube[Math.floor(Math.random()*youtube.length)].link);
   setTimeout(function () {
-    if(youtubeTab){
+    if(youtubeTab !== undefined){
       youtubeTab.quit();
       youtubeTab = undefined;
-    }
-    if(Math.random > 0.1){
-      OneYoutube();
     }
   }, beat*16);
 }
@@ -472,6 +482,9 @@ console.log('tick');
   }
 
   if(i==3){
+
+    // var index = Math.floor(Math.random()*web.length)
+    // WebTab(web[index]);
     if(Math.random()<0.0444){
       console.log("YOUTUBEBEAT");
       YoutubeBeat(0, colundi.randomInBand(0,20));
@@ -488,6 +501,8 @@ console.log('tick');
 
   //console.log('next');
 }
+
+
 
 function Instagram() {
   if(instagramTab){
@@ -518,7 +533,7 @@ function FacebookGroup(){
     }, colundi.randomInBand(0,10));
   }
   setTimeout(function () {
-    if(facebookTab){
+    if(facebookTab !== undefined){
       facebookTab.quit();
       facebookTab = undefined;
     }

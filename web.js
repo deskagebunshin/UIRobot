@@ -31,6 +31,17 @@ function searchNetflix(driver, show) {
   });
 }
 
+function killAfter(driver) {
+  console.log("quitsequenceinitiated");
+  setTimeout(function () {
+    console.log("quittin");
+
+      driver.quit();
+      driver = undefined;
+
+  }, 60000*8);
+}
+
 module.exports = {
   Netflix: function (show){
     var password =  netflixDeets.pass;
@@ -108,6 +119,7 @@ module.exports = {
     driver.wait(until.elementIsVisible(user), time).click().catch(function () {
       console.log("no bgvid");
     });
+    killAfter(driver);
     return driver;
   },
 
@@ -145,7 +157,7 @@ module.exports = {
 
     });
 
-
+    killAfter(driver);
     return driver;
   },
 
@@ -181,7 +193,7 @@ module.exports = {
 
     });
 
-
+    killAfter(driver);
     return driver;
   },
 
@@ -230,6 +242,7 @@ module.exports = {
       });
 
     });
+    killAfter(driver);
   },
 
   Youtube: function (link, scale) {
@@ -247,7 +260,7 @@ module.exports = {
     chromeCapabilities.set('chromeOptions', chromeOptions);
     var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
 
-    var windowOptions = {height: 600, width: 1000, x: Math.floor(Math.random() * 800) + 300, y: Math.floor(Math.random() * 500)}
+    var windowOptions = {height: 800, width: 1000, x: Math.floor(Math.random() * 800) + 300, y: Math.floor(Math.random() * 500)}
     driver.manage().window().setRect(windowOptions);
 
     driver.get(link).then(function () {
@@ -260,7 +273,7 @@ module.exports = {
 
     });
 
-
+    killAfter(driver);
     return driver;
   },
 
