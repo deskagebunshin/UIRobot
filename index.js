@@ -304,6 +304,9 @@ function YoutubeMusic() {
 
 
   youtubeMusicTab = web.Youtube(youtubeMusic[i].link);
+  setTimeout(function () {
+    NetflixAndChill();
+  }, 60000*3);
   console.log("new music tab");
 }
 
