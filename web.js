@@ -7,7 +7,7 @@ function searchNetflix(driver, show) {
     until = webdriver.until;
 
   var time  = 30000;
-  driver.get('https://www.netflix.com');
+  //driver.get('https://www.netflix.com');
   var search = driver.wait(until.elementLocated({ className: 'searchTab' }), time);
   driver.wait(until.elementIsVisible(search), time).click().then(function () {
     var searchinput = driver.wait(until.elementLocated({ xpath: '//input[@dir="ltr"]' }), time);
