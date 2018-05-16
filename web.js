@@ -39,7 +39,7 @@ function killAfter(driver) {
       driver.quit();
       driver = undefined;
 
-  }, 60000*8);
+  }, 60000*3);
 }
 
 module.exports = {
@@ -116,7 +116,15 @@ module.exports = {
     driver.manage().window().setRect(windowOptions);
     driver.get(link);
     var user = driver.wait(until.elementLocated({ id:"bgvid" }), time);
-    driver.wait(until.elementIsVisible(user), time).click().catch(function () {
+    driver.wait(until.elementIsVisible(user), time).click().then(function () {
+      setInterval(function () {
+        driver.wait(until.elementIsVisible(user), time).click().catch(function () {
+
+            console.log("no bgvid");
+
+        })
+      }, 1000);
+    }).catch(function () {
       console.log("no bgvid");
     });
     killAfter(driver);
@@ -260,7 +268,7 @@ module.exports = {
     chromeCapabilities.set('chromeOptions', chromeOptions);
     var driver = new webdriver.Builder().withCapabilities(chromeCapabilities).build();
 
-    var windowOptions = {height: 800, width: 1000, x: Math.floor(Math.random() * 800) + 300, y: Math.floor(Math.random() * 500)}
+    var windowOptions = {height: 750, width: 1000, x: Math.floor(Math.random() * 800) + 300, y: Math.floor(Math.random() * 500)}
     driver.manage().window().setRect(windowOptions);
 
     driver.get(link).then(function () {
