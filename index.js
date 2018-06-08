@@ -79,7 +79,7 @@ setTimeout(function () {
       spotifyTab = undefined;
       NetflixAndChill();
     });
-  }, beat * 64 * 16);
+  }, beat * 64 * 64);
 
   // TEST One Youtube
   // setInterval(function () {
